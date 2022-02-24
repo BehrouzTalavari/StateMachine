@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "j5ckMAeV+Fm6UbQJcMB5v05ka4tqV51khKo2CljnE/fANXtdspmsyNEH5eWV1pJL70FUKR4XqNnzEEYG9jq9hw==",
+  "success": true,
+  "projectFilePath": "D:\\Project\\StateMachine\\StateMachine\\StateMachine\\StateMachine.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Behrouz\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.14.0\\microsoft.visualstudio.azure.containers.tools.targets.1.14.0.nupkg.sha512",
+    "C:\\Users\\Behrouz\\.nuget\\packages\\stateless\\5.11.0\\stateless.5.11.0.nupkg.sha512"
+  ],
+  "logs": []
+}

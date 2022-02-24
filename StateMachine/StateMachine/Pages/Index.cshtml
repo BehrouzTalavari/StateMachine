@@ -1,0 +1,31 @@
+﻿@page
+@using StateMachineSamples;
+@model IndexModel
+@{
+	ViewData["Title"] = "Home page";
+}
+
+<div class="text-center"> 
+	<h2 class="display-4">On Off State Machine</h2>
+	@{
+		LightSatetMachine lightSatetMachine = new LightSatetMachine();
+	}
+	<P>
+		@lightSatetMachine.Run('d') <br />
+		@lightSatetMachine.Run('d') <br />
+		@lightSatetMachine.Run('d') <br />
+	</P>
+	<h1 class="display-4">Blog Post State Machine</h1>
+	@{
+		BlogPostManager blogPostManager  = new BlogPostManager();		
+	}
+	<hr />
+	<p>
+		@blogPostManager.Save() <br />
+		@blogPostManager.Reject() <br />
+		@blogPostManager.RequireEdit() <br />
+		@blogPostManager.Save() <br />
+		@blogPostManager.Accept() <br />
+	</p>
+</div>
+

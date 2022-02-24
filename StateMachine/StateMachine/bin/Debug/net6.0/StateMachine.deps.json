@@ -1,0 +1,50 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "StateMachine/1.0.0": {
+        "dependencies": {
+          "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "1.14.0",
+          "stateless": "5.11.0"
+        },
+        "runtime": {
+          "StateMachine.dll": {}
+        }
+      },
+      "Microsoft.VisualStudio.Azure.Containers.Tools.Targets/1.14.0": {},
+      "stateless/5.11.0": {
+        "runtime": {
+          "lib/net5.0/stateless.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "5.11.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "StateMachine/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.VisualStudio.Azure.Containers.Tools.Targets/1.14.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-yORzATlNmCp4kEwkxznLZ3maTaUJc5yTcu3aPufY8Tq4141/bRRWsa91u8I24MR3BTCCJlZO98xuQWB4arlKCw==",
+      "path": "microsoft.visualstudio.azure.containers.tools.targets/1.14.0",
+      "hashPath": "microsoft.visualstudio.azure.containers.tools.targets.1.14.0.nupkg.sha512"
+    },
+    "stateless/5.11.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-5XXmdEQBOpgE90vqxfZH0ekdqfGB6xLe0Uyb7EyHr/fgv/zkZtDcru4KxRvAvWxE1u4c8MOZnOnXoRfQOfFnTg==",
+      "path": "stateless/5.11.0",
+      "hashPath": "stateless.5.11.0.nupkg.sha512"
+    }
+  }
+}
