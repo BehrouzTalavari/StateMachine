@@ -10,25 +10,44 @@
 
 	@{
 		RequestModel model = new RequestModel
-		{
-			Id = 1,
-			RequestText = "درخواست ثبت پیشنهاد",
-			CurrentStatus = "شروع"
-		};
+			{
+				CurrentStatus = "شروع",
+				SystemName = "PIM",
+				WorkflowName = "x"
+			};
 
+		model.Params.Add(new RequestViewModel
+			{
+				Id = 1,
+				RequestText = "درخواست ثبت پیشنهاد",
+			});	
+		model.Params.Add(new RequestViewModelXXXXX
+			{
+				Id = 1,
+				FirstName = "مهرداد",
+				LastName = "شکوهی نیا",
+			});
 
-		WorkFlowManager blogPostManager = new WorkFlowManager(model);
+		WorkFlowManagerImp blogPostManager = new WorkFlowManagerImp(model);
+		 ; 
+
 	}
 	<hr />
 	<p>
-		@blogPostManager.GetGraphInfo() <br />
+		@blogPostManager.GetGraphJsonModel() <br />
 		<hr />
-		@blogPostManager.Save(model) <br />
-		@blogPostManager.Reject(model) <br />
-		@blogPostManager.RequireEdit(model) <br />
-		@blogPostManager.Accept(model) <br />
-		@blogPostManager.RequireEdit(model) <br />
-		@blogPostManager.Save(model) <br />
+		@blogPostManager.Invoke(blogPostManager.GetPermittedTriggers.First(),model) <br />
+		@string.Join(",", blogPostManager.GetPermittedTriggers) <br />
+		@*		@blogPostManager.Reject(model) <br />
+			@string.Join(",", blogPostManager.GetPermittedTriggers) <br />
+			@blogPostManager.RequireEdit(model) <br />
+			@string.Join(",", blogPostManager.GetPermittedTriggers) <br />
+			@blogPostManager.Accept(model) <br />
+			@string.Join(",", blogPostManager.GetPermittedTriggers) <br />
+			@blogPostManager.RequireEdit(model) <br />
+			@string.Join(",", blogPostManager.GetPermittedTriggers) <br />
+			@blogPostManager.Save(model) <br />
+			@string.Join(",", blogPostManager.GetPermittedTriggers) <br />*@
 	</p>
 </div>
 

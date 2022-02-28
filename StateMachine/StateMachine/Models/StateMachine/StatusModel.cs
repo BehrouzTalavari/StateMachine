@@ -11,7 +11,7 @@ namespace StateMachine.Models.StateMachine
     {
         public int Id { get; set; }
         public MethodModel MethodModel { get; set; }
-        public List<TriggerModel> IfClause { get; set; }=new List<TriggerModel>();
+        public List<TriggerModel> IfClause { get; set; } = new List<TriggerModel>();
         public List<PermitReentryIfModel> PermitReentryIfModels { get; set; } = new List<PermitReentryIfModel>();
         public delegate void UnhandledTriggerDelegate(string state, string trigger);
         public UnhandledTriggerDelegate OnUnhandledTrigger = null;
@@ -42,8 +42,10 @@ namespace StateMachine.Models.StateMachine
     }
     public static class StatusGenerator
     {
-        public static List<StatusModel> GetStatusModels()
+        public static List<StatusModel> GetStatusModels(IRequestModel requestModel)
         {
+            //todo  get from Db
+
             var list = new List<StatusModel>();
 
             list.Add(new StatusModel()
@@ -56,20 +58,13 @@ namespace StateMachine.Models.StateMachine
             list.Add(new StatusModel()
             {
                 Id = 2,
-                MethodModel = new MethodModel
-                {
-                    CurrentStatus = "درجریان",
-                },
+                MethodModel = new MethodModel { CurrentStatus = "درجریان", },
                 IfClause = new List<TriggerModel>()
                 {
                     new TriggerModel { Trigger = "قبول", Status = "انتشار یافته"},
-                    new TriggerModel { Trigger = "رد", Status = "رد شده"},
+                    new TriggerModel { Trigger = "رد", Status = "رد شده",GuardClauseDelegates=()=>{return true; } },
                 },
-
-                PermitReentryIfModels = new List<PermitReentryIfModel>
-                {
-                    new PermitReentryIfModel { Trigger="ذخیره"}
-                }
+                PermitReentryIfModels = new List<PermitReentryIfModel> { new PermitReentryIfModel { Trigger = "ذخیره", } }
             });
 
             list.Add(new StatusModel()

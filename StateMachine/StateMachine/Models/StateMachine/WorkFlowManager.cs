@@ -1,160 +1,83 @@
 ﻿using Stateless.Graph;
 
-using System.Diagnostics;
-
 namespace StateMachine.Models.StateMachine
 {
-    public class WorkFlowManager
+    public abstract class WorkFlowManager<T> : StateMachineModel where T : class, IRequestModel, new()
     {
-        private StateMachineModel _stateMachine;
-        public WorkFlowManager(RequestModel requestModel)
+        private readonly T _requestModel;
+        public WorkFlowManager(StatusModelWrapper statusModelWrapper) : base(statusModelWrapper)
         {
-            configureWorkflow(requestModel);
         }
-
-
-        private void configureWorkflow(RequestModel requestModel)
-        {
-            var model = StatusGenerator.GetStatusModels();
-
-            var BeginStatus = model.First(x => x.MethodModel.CurrentStatus == "شروع");
-            BeginStatus.MethodModel.OnEntry = (model) =>
-            {
-                Debug.WriteLine($"شروع OnEntry {nameof(model)} {requestModel.RequestText}");
-            };
-
-            BeginStatus.MethodModel.OnExit = (model) =>
-            {
-                Debug.WriteLine($"شروع OnExit {nameof(model)} {requestModel.RequestText}");
-            };
-
-            BeginStatus.IfClause.First(x => x.Trigger == "ذخیره").GuardClauseDelegates = () =>
-            {
-                return UserCanPost;
-            };
-
-            var InProgressStatus = model.First(x => x.MethodModel.CurrentStatus == "درجریان");
-
-            InProgressStatus.MethodModel.OnEntry = (model) =>
-            {
-                Debug.WriteLine($"InProgress OnEntry {nameof(model)}");
-            };
-
-            InProgressStatus.MethodModel.OnExit = (model) =>
-            {
-                Console.WriteLine($"درجریان OnExit {nameof(model)}");
-            };
-
-            InProgressStatus.IfClause.First(x => x.Trigger == "قبول").GuardClauseDelegates = () =>
-            {
-                return UserIsAdmin;
-            };
-
-            InProgressStatus.IfClause.First(x => x.Trigger == "رد").GuardClauseDelegates = () =>
-            {
-                return UserIsAdmin;
-            };
-
-            InProgressStatus.PermitReentryIfModels.First(x => x.Trigger == "ذخیره").GuardClauseDelegates = () =>
-            {
-                return UserHasEditRights;
-            };
-
-            var PublishedStatus = model.First(x => x.MethodModel.CurrentStatus == "انتشار یافته");
-
-            PublishedStatus.MethodModel.OnEntry = (model) =>
-            {
-                Debug.WriteLine($"انتشار یافته OnEntry {nameof(model)}");
-            };
-
-            PublishedStatus.MethodModel.OnExit = (model) =>
-            {
-                Debug.WriteLine($"انتشار یافته OnExit {nameof(model)}");
-            };
-
-            PublishedStatus.IfClause.First(x => x.Trigger == "نیاز به ویرایش").GuardClauseDelegates = () =>
-            {
-                return UserHasEditRights;
-            };
-
-
-            var RejectedStatus = model.First(x => x.MethodModel.CurrentStatus == "رد شده");
-            RejectedStatus.MethodModel.OnEntry = (model) =>
-            {
-                Debug.WriteLine($"رد شده OnEntry {nameof(model)}");
-            };
-            RejectedStatus.MethodModel.OnExit = (model) =>
-            {
-                Debug.WriteLine($"رد شده OnExit {nameof(model)}");
-            };
-            RejectedStatus.IfClause.First(x => x.Trigger == "نیاز به ویرایش").GuardClauseDelegates = () =>
-            {
-                return UserHasEditRights;
-            };
-
-            _stateMachine = new StateMachineModel(new StatusModelWrapper
+        protected WorkFlowManager(T requestModel)
+            : this(new StatusModelWrapper()
             {
                 Status = requestModel.CurrentStatus,
-                StatusModels = model
-            });
-
+                StatusModels = StatusGenerator.GetStatusModels(requestModel)
+            })
+        {
+            _requestModel = requestModel;
+            ConfigureWorkFlow(requestModel);
         }
 
-        public bool UserIsAdmin
+        public WorkFlowManager<T> AddOnEntryStatus(string status, Action<object> method)
         {
-            get
+            var findedstatus = _model.First(x => x.MethodModel.CurrentStatus == status);
+            findedstatus.MethodModel.OnEntry = (model) =>
             {
-                return true; // TODO: Evaluate if user is an admin.
-            }
+                method(model);
+            };
+
+            return this;
         }
 
-        public bool UserCanPost
+        public WorkFlowManager<T> AddOnExitStatus(string status, Action<object, T> method)
         {
-            get
+            var findedstatus = _model.First(x => x.MethodModel.CurrentStatus == status);
+            findedstatus.MethodModel.OnExit = (model) =>
             {
-                return true; // TODO: Evaluate if user is authenticated
-            }
+                method(model, _requestModel);
+            };
+
+            return this;
+        }
+        public WorkFlowManager<T> AddIfClause(string status, string trigger, Func<bool> method)
+        {
+            var findedstatus = _model.First(x => x.MethodModel.CurrentStatus == status);
+            findedstatus.IfClause.First(x => x.Trigger == trigger).GuardClauseDelegates = () => { return method(); };
+
+            return this;
         }
 
-        public bool UserHasEditRights
+        public WorkFlowManager<T> AddReentryIf(string status, string trigger, Func<bool> method)
         {
-            get
+            var findedstatus = _model.First(x => x.MethodModel.CurrentStatus == status);
+            findedstatus.PermitReentryIfModels.First(x => x.Trigger == trigger).GuardClauseDelegates = () => { return method(); };
+
+            return this;
+        }
+
+        public string GetGraphJsonModel()
+        {
+            return UmlDotGraph.Format(GetInfo());
+        }
+
+        public void AddTrasitionMethod(Action<object> action)
+        {
+            SetTransitionedMethod(action);
+        }
+
+        public abstract void ConfigureWorkFlow(T workFlowModel);
+        public virtual string Invoke(string trigger, T workFlowModel)
+        {
+            if (TryFireTrigger(trigger))
             {
-                return true; // TODO: Evaluate if user is owner or admin
+                workFlowModel.CurrentStatus = CurrentStatus;
+                return CurrentStatus;
+
             }
+            return string.Empty;
         }
 
-
-        public string Save(RequestModel model)
-        {
-            return _stateMachine.TryFireTrigger(StatusGenerator.GetTriggers().First(x => x == "ذخیره"))
-                ? $"وضعیت تغییر کرد"
-                : "امکان تغییر وضعیت وجود ندارد";
-        }
-        public string RequireEdit(RequestModel model)
-        {
-            return _stateMachine.TryFireTrigger(StatusGenerator.GetTriggers().First(x => x == "نیاز به ویرایش"))
-                ? "نیاز به ویرایش دارد"
-                : "امکان تغییر وضعیت وجود ندارد";
-        }
-
-        public string Accept(RequestModel model)
-        {
-            return _stateMachine.TryFireTrigger(StatusGenerator.GetTriggers().First(x => x == "قبول"))
-                ? "پذیرفته شد"
-                : "امکان تغییر وضعیت وجود ندارد";
-        }
-        public string Reject(RequestModel model)
-        {
-            return _stateMachine.TryFireTrigger(StatusGenerator.GetTriggers().First(x => x == "رد"))
-                ? "رد شد"
-                : "امکان تغییر وضعیت وجود ندارد";
-        }
-
-        public string GetGraphInfo()
-        {
-            return UmlDotGraph.Format(_stateMachine.GetInfo());
-        }
 
     }
 

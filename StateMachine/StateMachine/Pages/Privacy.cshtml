@@ -1,8 +1,32 @@
 ﻿@page
 @model PrivacyModel
 @{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Grapg Viewer";
 }
 <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+ 
+<style>
+  button { margin:4px; cursor:pointer; font-size: 70%; font-family; arial,sans-serif; margin-right: 5px }
+</style>
+
+<textarea id="graphviz_data" rows="20" cols="80" width="100%" wrap="off">
+digraph G {
+  "Welcome" -> "To"
+  "To" -> "Web"
+  "To" -> "GraphViz!"
+}
+</textarea>
+
+<button id="generate_btn" disabled style="font-size: 120%"><b>Loading...</b>
+<!-- The "update"  -->
+</button>
+
+<div id="graphviz_svg_div">
+  <!-- Target for dynamic svg generation -->
+</div>
+<!-- Defer loading of javascript by placing these tags at the tail end of the document -->
+<script language="javascript" type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"> </script>
+<script language="javascript" type="text/javascript" src="./viz.js"></script>
+<script language="javascript" type="text/javascript" src="./site.js"> </script>
+

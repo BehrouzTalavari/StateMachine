@@ -1,32 +1,33 @@
 ﻿using Stateless;
 using Stateless.Reflection;
- 
 
 namespace StateMachine.Models.StateMachine
 {
 
-    public class StateMachineModel 
+    public abstract class StateMachineModel
     {
-        private readonly StateMachine<string, string> stateMachine = null; 
+        protected StateMachine<string, string> stateMachine = null;
+        protected List<StatusModel> _model;
 
         public StateMachineModel(StatusModelWrapper statusModel)
-        { 
-            stateMachine = new StateMachine<string, string>(statusModel.Status);
+        {
+            stateMachine = new StateMachine<string, string>(statusModel.StatusModels[0].MethodModel.CurrentStatus);
+            _model = statusModel.StatusModels;
 
             foreach (var status in statusModel.StatusModels)
             {
-                stateMachine.Configure(status.MethodModel.CurrentStatus) 
+                stateMachine.Configure(status.MethodModel.CurrentStatus)
                     .OnEntry((model) => { if (status.MethodModel.OnEntry != null) status.MethodModel.OnEntry(model); })
                     .OnExit((model) => { if (status.MethodModel.OnExit != null) status.MethodModel.OnExit(model); });
-  
+
                 foreach (var permitIf in status.IfClause)
                 {
                     stateMachine.Configure(status.MethodModel.CurrentStatus)
-                        .PermitIf(permitIf.Trigger, permitIf.Status, () => 
-                        { 
-                            if (permitIf.GuardClauseDelegates != null) 
-                                return permitIf.GuardClauseDelegates(); 
-                            return true; 
+                        .PermitIf(permitIf.Trigger, permitIf.Status, () =>
+                        {
+                            if (permitIf.GuardClauseDelegates != null)
+                                return permitIf.GuardClauseDelegates();
+                            return true;
                         });
                 }
 
@@ -42,8 +43,8 @@ namespace StateMachine.Models.StateMachine
                 }
             }
 
-            stateMachine.OnUnhandledTrigger((state, trigger) => { if (statusModel.StatusModels[0].OnUnhandledTrigger != null) 
-                    statusModel.StatusModels[0].OnUnhandledTrigger(state, trigger); });
+            stateMachine.OnUnhandledTrigger((state, trigger) => { if (statusModel.StatusModels[0].OnUnhandledTrigger != null) statusModel.StatusModels[0].OnUnhandledTrigger(state, trigger); });
+
         }
 
         public bool TryFireTrigger(string trigger)
@@ -52,12 +53,12 @@ namespace StateMachine.Models.StateMachine
             {
                 return false;
             }
-             
+
             stateMachine.Fire(trigger);
             return true;
         }
 
-        public string GetState
+        public string CurrentStatus
         {
             get
             {
@@ -69,6 +70,16 @@ namespace StateMachine.Models.StateMachine
         {
             StateMachineInfo info = stateMachine.GetInfo();
             return info;
+        }
+
+        public List<string> GetPermittedTriggers { get { return stateMachine.GetPermittedTriggers().ToList(); } }
+
+        public void SetTransitionedMethod(Action<object> model)
+        {
+            stateMachine.OnTransitioned((state) =>
+            {
+                model(state);
+            });
         }
     }
 
