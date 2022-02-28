@@ -1,31 +1,34 @@
 ﻿@page
-@using StateMachineSamples;
+@using StateMachine.Models.StateMachine;
 @model IndexModel
 @{
 	ViewData["Title"] = "Home page";
 }
 
-<div class="text-center"> 
-	<h2 class="display-4">On Off State Machine</h2>
+<div class="text-center">
+
+
 	@{
-		LightSatetMachine lightSatetMachine = new LightSatetMachine();
-	}
-	<P>
-		@lightSatetMachine.Run('d') <br />
-		@lightSatetMachine.Run('d') <br />
-		@lightSatetMachine.Run('d') <br />
-	</P>
-	<h1 class="display-4">Blog Post State Machine</h1>
-	@{
-		BlogPostManager blogPostManager  = new BlogPostManager();		
+		RequestModel model = new RequestModel
+		{
+			Id = 1,
+			RequestText = "درخواست ثبت پیشنهاد",
+			CurrentStatus = "شروع"
+		};
+
+
+		WorkFlowManager blogPostManager = new WorkFlowManager(model);
 	}
 	<hr />
 	<p>
-		@blogPostManager.Save() <br />
-		@blogPostManager.Reject() <br />
-		@blogPostManager.RequireEdit() <br />
-		@blogPostManager.Save() <br />
-		@blogPostManager.Accept() <br />
+		@blogPostManager.GetGraphInfo() <br />
+		<hr />
+		@blogPostManager.Save(model) <br />
+		@blogPostManager.Reject(model) <br />
+		@blogPostManager.RequireEdit(model) <br />
+		@blogPostManager.Accept(model) <br />
+		@blogPostManager.RequireEdit(model) <br />
+		@blogPostManager.Save(model) <br />
 	</p>
 </div>
 

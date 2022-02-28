@@ -52,9 +52,9 @@
         }
 
         // User actions
-        public string Save() 
+        public string Save(string Req) 
         {
-            if (_stateMachine.TryFireTrigger(BlogPostStateMachine.Trigger.Save)) return "Post Saved";
+            if (_stateMachine.TryFireTrigger(BlogPostStateMachine.Trigger.Save)) return $"Post Saved {Req}";
             return "State Not Changed";
         }
         public string RequireEdit() {

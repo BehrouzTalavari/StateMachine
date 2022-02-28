@@ -63,7 +63,12 @@ namespace StateMachine.StateMachineSamples
               .OnExit(() => { if (OnInProgressExit != null) OnInProgressExit(); })
               .PermitIf(Trigger.Accept, State.Published, () => { if (GuardClauseFromInProgressToPublishedUsingTriggerAccept != null) return GuardClauseFromInProgressToPublishedUsingTriggerAccept(); return true; })
               .PermitIf(Trigger.Reject, State.Rejected, () => { if (GuardClauseFromInProgressToRejectedUsingTriggerReject != null) return GuardClauseFromInProgressToRejectedUsingTriggerReject(); return true; })
-              .PermitReentryIf(Trigger.Save, () => { if (GuardClauseFromInProgressToInProgressUsingTriggerSave != null) return GuardClauseFromInProgressToInProgressUsingTriggerSave(); return true; })
+              .PermitReentryIf(Trigger.Save, () => 
+              {
+                  if (GuardClauseFromInProgressToInProgressUsingTriggerSave != null) 
+                      return GuardClauseFromInProgressToInProgressUsingTriggerSave(); 
+                  return true;
+              })
             ;
 
             stateMachine.Configure(State.Published)
