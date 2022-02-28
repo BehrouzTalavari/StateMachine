@@ -67,7 +67,7 @@ namespace StateMachine.Models.StateMachine
         }
 
         public abstract void ConfigureWorkFlow(T workFlowModel);
-        public virtual string Invoke(string trigger, T workFlowModel)
+        public virtual string ChangeStatus(string trigger, T workFlowModel)
         {
             if (TryFireTrigger(trigger))
             {

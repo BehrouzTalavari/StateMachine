@@ -36,7 +36,7 @@
 	<p>
 		@blogPostManager.GetGraphJsonModel() <br />
 		<hr />
-		@blogPostManager.Invoke(blogPostManager.GetPermittedTriggers.First(),model) <br />
+		@blogPostManager.ChangeStatus(blogPostManager.GetPermittedTriggers.First(),model) <br />
 		@string.Join(",", blogPostManager.GetPermittedTriggers) <br />
 		@*		@blogPostManager.Reject(model) <br />
 			@string.Join(",", blogPostManager.GetPermittedTriggers) <br />

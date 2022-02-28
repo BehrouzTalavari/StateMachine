@@ -123,10 +123,10 @@ namespace StateMachine.Models.StateMachine
             }
         }
 
-        public override string Invoke(string trigger, RequestModel workFlowModel)
+        public override string ChangeStatus(string trigger, RequestModel workFlowModel)
         {
 
-            if (base.Invoke(trigger, workFlowModel) == string.Empty)
+            if (base.ChangeStatus(trigger, workFlowModel) == string.Empty)
             {
                 return "امکان تغییر وضعیت وجود ندارد";
             }
