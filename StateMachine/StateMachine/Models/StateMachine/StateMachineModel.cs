@@ -11,6 +11,12 @@ namespace StateMachine.Models.StateMachine
 
         public StateMachineModel(StatusModelWrapper statusModel)
         {
+            ConfigureStateMachine(statusModel);
+
+        }
+
+        public void ConfigureStateMachine(StatusModelWrapper statusModel)
+        {
             stateMachine = new StateMachine<string, string>(statusModel.StatusModels[0].MethodModel.CurrentStatus);
             _model = statusModel.StatusModels;
 
@@ -44,7 +50,6 @@ namespace StateMachine.Models.StateMachine
             }
 
             stateMachine.OnUnhandledTrigger((state, trigger) => { if (statusModel.StatusModels[0].OnUnhandledTrigger != null) statusModel.StatusModels[0].OnUnhandledTrigger(state, trigger); });
-
         }
 
         public bool TryFireTrigger(string trigger)
@@ -72,7 +77,7 @@ namespace StateMachine.Models.StateMachine
             return info;
         }
 
-        public List<string> GetPermittedTriggers { get { return stateMachine.GetPermittedTriggers().ToList(); } }
+        public List<string> GetPermittedTriggers { get { return stateMachine.GetPermittedTriggers(stateMachine.State).ToList(); } }
 
         public void SetTransitionedMethod(Action<object> model)
         {

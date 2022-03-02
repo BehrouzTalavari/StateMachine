@@ -78,7 +78,119 @@ namespace StateMachine.Models.StateMachine
             return string.Empty;
         }
 
+        public void AddOrganizationStructure()
+        {
+            var getOrg = OrganizattionRepository.GetOrganizationStracture().OrderByDescending(x => x.level);
+
+            var list = new List<StatusModel>();
+
+            int id = 1;
+            list.Add(new StatusModel()
+            {
+                Id = id++,
+                MethodModel = new MethodModel { CurrentStatus = "شروع" },
+                IfClause = new List<TriggerModel>() { new TriggerModel { Trigger = $"ذخیره-{getOrg.First().Role}", Status = $"در انتظار تائید-{getOrg.First().Role}" } },
+            });
+
+            foreach (var item in getOrg)
+            {
+                list.Add(new StatusModel
+                {
+                    Id = id++,
+                    MethodModel = new MethodModel { CurrentStatus = $"در انتظار تائید-{item.Role}" },
+                    IfClause = new List<TriggerModel>() { new TriggerModel { Trigger = $"{item.Role}-تائید توسط", Status = $"در انتظار تائید-{item.ParrentRole}" } },
+                });
+            }
+
+            list.Add(new StatusModel()
+            {
+                Id = id,
+                MethodModel = new MethodModel { CurrentStatus = list.Last().MethodModel.CurrentStatus },
+                IfClause = new List<TriggerModel>() { new TriggerModel { Trigger = "خاتمه", Status = "خاتمه یافته" } },
+            });
+
+            ConfigureStateMachine(new StatusModelWrapper
+            {
+                Status = "شروع",
+                StatusModels = list
+            });
+
+        }
 
     }
+    public static class OrganizattionRepository
+    {
+        public static List<OrganizationStracture> GetOrganizationStracture()
+        {
+            List<OrganizationStracture> organizationStractures = new List<OrganizationStracture>();
+            organizationStractures.Add(new OrganizationStracture
+            {
+                level = 1,
+                ParrentRole = String.Empty,
+                Role = "مدیر عامل"
+            });
+            organizationStractures.Add(new OrganizationStracture
+            {
+                level = 2,
+                ParrentRole = "مدیر عامل",
+                Role = "معاون فناوری"
+            });
 
+            organizationStractures.Add(new OrganizationStracture
+            {
+                level = 3,
+                ParrentRole = "معاون فناوری",
+                Role = "مدیر فناوری اطلاعات"
+            });
+
+            organizationStractures.Add(new OrganizationStracture
+            {
+                level = 4,
+                ParrentRole = "مدیر فناوری اطلاعات",
+                Role = "رئیس سخت افزار"
+            });
+
+            organizationStractures.Add(new OrganizationStracture
+            {
+                level = 5,
+                ParrentRole = "رئیس سخت افزار",
+                Role = "کارشناس سخت افزار"
+            });
+
+            //organizationStractures.Add(new OrganizationStracture
+            //{
+            //    level = 4,
+            //    ParrentRole = "مدیر فناوری اطلاعات",
+            //    Role = "رئیس سیستم های وب"
+            //});
+
+            //organizationStractures.Add(new OrganizationStracture
+            //{
+            //    level = 5,
+            //    ParrentRole = "رئیس سیستم های وب",
+            //    Role = "کارشناس نرم افزار"
+            //});
+
+            //organizationStractures.Add(new OrganizationStracture
+            //{
+            //    level = 4,
+            //    ParrentRole = "مدیر فناوری اطلاعات",
+            //    Role = "رئیس سیستم های MIS"
+            //});
+
+            //organizationStractures.Add(new OrganizationStracture
+            //{
+            //    level = 5,
+            //    ParrentRole = "رئیس سیستم های MIS",
+            //    Role = "کارشناس نرم افزار MIS"
+            //});
+            return organizationStractures;
+        }
+    }
+    public class OrganizationStracture
+    {
+        public int level { get; set; }
+        public string Role { get; set; }
+        public string ParrentRole { get; set; }
+    }
 }

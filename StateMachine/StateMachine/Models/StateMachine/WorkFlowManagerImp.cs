@@ -78,62 +78,30 @@ namespace StateMachine.Models.StateMachine
             }
         }
 
-
-
-        public string RequireEdit(RequestModel model)
-        {
-
-            if (TryFireTrigger("نیاز به ویرایش"))
-            {
-                model.CurrentStatus = CurrentStatus;
-                return $"نیاز به ویرایش دارد  ==> وضعیت  {model.CurrentStatus}";
-            }
-            else
-            {
-
-                return "امکان تغییر وضعیت وجود ندارد";
-            }
-        }
-
-        public string Accept(RequestModel model)
-        {
-            if (TryFireTrigger("قبول"))
-            {
-                model.CurrentStatus = CurrentStatus;
-                return $"پذیرفته شد  ==> وضعیت  {model.CurrentStatus}";
-            }
-            else
-            {
-
-                return "امکان تغییر وضعیت وجود ندارد";
-            }
-        }
-
-        public string Reject(RequestModel model)
-        {
-            if (TryFireTrigger("رد"))
-            {
-                model.CurrentStatus = CurrentStatus;
-                return $"رد شد  ==> وضعیت  {model.CurrentStatus}";
-            }
-            else
-            {
-
-                return "امکان تغییر وضعیت وجود ندارد";
-            }
-        }
-
         public override string ChangeStatus(string trigger, RequestModel workFlowModel)
         {
 
             if (base.ChangeStatus(trigger, workFlowModel) == string.Empty)
             {
-                return "امکان تغییر وضعیت وجود ندارد";
+                return "عملیات ناموفق";
             }
             else
             {
-                return $"پیام ذخیره شد  ==> وضعیت  {workFlowModel.CurrentStatus}";
+                return $"وضعیت توسط عملیات {trigger}  به وضعیت {workFlowModel.CurrentStatus} تغییر پیدا کرد";
             }
+        }
+    }
+
+
+    public class WorkFlowManagerImpForOrganization : WorkFlowManager<RequestModel>
+    {
+        public WorkFlowManagerImpForOrganization(RequestModel requestModel) : base(requestModel)
+        {
+            AddOrganizationStructure();
+        }
+
+        public override void ConfigureWorkFlow(RequestModel workFlowModel)
+        { 
         }
     }
 

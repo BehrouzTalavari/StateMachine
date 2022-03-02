@@ -20,7 +20,7 @@
 			{
 				Id = 1,
 				RequestText = "درخواست ثبت پیشنهاد",
-			});	
+			});
 		model.Params.Add(new RequestViewModelXXXXX
 			{
 				Id = 1,
@@ -28,8 +28,9 @@
 				LastName = "شکوهی نیا",
 			});
 
-		WorkFlowManagerImp blogPostManager = new WorkFlowManagerImp(model);
-		 ; 
+		WorkFlowManagerImp blogPostManager = new WorkFlowManagerImp(model); 
+
+		WorkFlowManagerImpForOrganization workFlowManagerImpForOrganization = new WorkFlowManagerImpForOrganization(model); 
 
 	}
 	<hr />
@@ -37,17 +38,20 @@
 		@blogPostManager.GetGraphJsonModel() <br />
 		<hr />
 		@blogPostManager.ChangeStatus(blogPostManager.GetPermittedTriggers.First(),model) <br />
-		@string.Join(",", blogPostManager.GetPermittedTriggers) <br />
-		@*		@blogPostManager.Reject(model) <br />
-			@string.Join(",", blogPostManager.GetPermittedTriggers) <br />
-			@blogPostManager.RequireEdit(model) <br />
-			@string.Join(",", blogPostManager.GetPermittedTriggers) <br />
-			@blogPostManager.Accept(model) <br />
-			@string.Join(",", blogPostManager.GetPermittedTriggers) <br />
-			@blogPostManager.RequireEdit(model) <br />
-			@string.Join(",", blogPostManager.GetPermittedTriggers) <br />
-			@blogPostManager.Save(model) <br />
-			@string.Join(",", blogPostManager.GetPermittedTriggers) <br />*@
+		وضعیت های در دسترس => @string.Join(",", blogPostManager.GetPermittedTriggers) <br />
+		@blogPostManager.ChangeStatus(blogPostManager.GetPermittedTriggers[1],model) <br />
+		وضعیت های در دسترس => @string.Join(",", blogPostManager.GetPermittedTriggers) <br />
+		@blogPostManager.ChangeStatus(blogPostManager.GetPermittedTriggers.First(),model) <br />
+		وضعیت های در دسترس => @string.Join(",", blogPostManager.GetPermittedTriggers) <br />
+		@blogPostManager.ChangeStatus(blogPostManager.GetPermittedTriggers.First(),model) <br />
+		وضعیت های در دسترس => @string.Join(",", blogPostManager.GetPermittedTriggers) <br />
+		@blogPostManager.ChangeStatus(blogPostManager.GetPermittedTriggers.First(),model) <br />
+		وضعیت های در دسترس => @string.Join(",", blogPostManager.GetPermittedTriggers) <br />
+		@blogPostManager.ChangeStatus(blogPostManager.GetPermittedTriggers[1],model) <br />
+		وضعیت های در دسترس => @string.Join(",", blogPostManager.GetPermittedTriggers) <br />
 	</p>
 </div>
+<hr />
+
+		@workFlowManagerImpForOrganization.GetGraphJsonModel() <br />
 
